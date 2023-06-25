@@ -1,20 +1,4 @@
-﻿//Desenvolva um jogo de adivinhação. O computador pensará em um número, e você, jogador, precisará adivinhá-lo.
-//A cada erro, a máquina lhe dirá se o número chutado foi maior ou menor do que o pensado. Você também poderá
-//escolher o nível de dificuldade do jogo, e isso lhe dará mais ou menos oportunidades de chutar um número. Ao
-//final, se você ganhar, o computador lhe dirá quantos pontos você fez, baseando-se em quão bons eram seus
-//chutes.
-//Pesquise sobre a geração de números randômicos em C#.
-//O jogador deverá adivinhar um número entre 1 e 20.
-//Os níveis de dificuldade serão:
-//(1) Fácil = 15 chances
-//(2) Médio = 10 chances
-//(3) Difícil = 5 chances
-
-//A pontuação do usuário começará em 1000, caso o usuário erre, será subtraído um valor da pontuação com a
-//seguinte fórmula:
-// (numero chutado – numero aleatório) / 2
-//Caso o resultado seja negativo, deverá ser extraído o valor absoluto.
-using System;
+﻿using System;
 
 namespace JogoDeAdivinhacao
 {
@@ -22,60 +6,77 @@ namespace JogoDeAdivinhacao
     {
         static void Main(string[] args)
         {
-            int pontuacaoUsuario;
-            int numeroAleatorio = new Random().Next(1, 21);
-            int ultimoNumero = 20, primeiroNumero = 1;
-            int escolhaUsuario = 0, nivelDificuldade = 0, quantidadeTentativas = 0;
+            Random random = new Random();
+            int numeroAleatorio = random.Next(1, 21); // Gera um número entre 1 e 20 
 
+            Console.WriteLine("Bem-vindo ao jogo de adivinhação!");
+            Console.WriteLine("Escolha o nível de dificuldade:");
+            Console.WriteLine("(1) Fácil - 3 chances");
+            Console.WriteLine("(2) Médio - 6 chances");
+            Console.WriteLine("(3) Difícil - 9 chances");
 
-            Console.WriteLine("***************************************");
-            Console.WriteLine("* Bem vindo(a) ao jogo de adivinhação *");
-            Console.WriteLine("***************************************\n\n");
+            Console.Write("Digite o número correspondente ao nível de dificuldade: ");
+            int nivelDificuldade = int.Parse(Console.ReadLine());
 
-            do
+            int numeroDeChances;
+            switch(nivelDificuldade)
+            { 
+                case 1:
+                numeroDeChances = 3;
+                break;
+            case 2:
+                numeroDeChances = 6;
+                break;
+            case 3:
+                numeroDeChances = 9;
+                break;
+            default:
+                Console.WriteLine("Nível de dificuldade inválido. Definindo para o nível Médio (6 chances).");
+                numeroDeChances = 6;
+                break;
+            }
+            int pontuacao = 1000;
+
+            while (numeroDeChances > 0)
             {
-                Console.WriteLine("Escolha o nível de dificuldade:\n [1]Fácil(15 tentativas)\n [2]Médio(10 tentativas)\n [3]Difícil(5 tentativas)\n Escolha:");
-                nivelDificuldade = Convert.ToInt32(Console.ReadLine());
-            } while (nivelDificuldade < 1 || nivelDificuldade > 3);
+                Console.WriteLine($"Chances restantes: {numeroDeChances}");
+                Console.Write("Digite seu palpite (entre 1 e 20): ");
+                int palpite = int.Parse(Console.ReadLine());
 
-
-
-
-            do
-            {
-                numeroAleatorio = primeiroNumero + (ultimoNumero - primeiroNumero) / 2;
-                tentativas++;
-                Console.WriteLine("O número que você escolheu é maior,menor ou igual a %d? Digite '>', '<' ou '=' respectivamente\n Número de tentativas : %d\n", aleatorio, tentativas);
-                Console.ReadLine(" %c", &simbolomate);
-                
-                switch (simbolomate)
+                if (palpite == numeroAleatorio)
                 {
-                    case '=':
-                        Console.Write("número correto");
-                        break;
-                    case '>':
-                        primeiroNumero = numeroAleatorio + 1;
-                        break;
-                    case '<':
-                        ultimoNumero = numeroAleatorio - 1;
-                        break;
+                    Console.WriteLine("Parabéns! Você acertou o número!");
+                    break;
                 }
-            } while (simbolomate != '=');
-        }
+                else
+                {
+                    Console.WriteLine("Você errou!");
 
-        int main()
-        {
-            int numero, tentar_de_novo = 1;
-            do
-            {
-                Console.Write("Pense e digite um número de 1 a 100\n");
-                Console.ReadLine("%d", &numero);
-                adivinha();
-                Console.Write("Se você deseja jogar novamente digite um qualquer numero, se não digite 0\n");
-                Console.ReadLine("%d", &tentar_de_novo);
-            } while (tentar_de_novo);
-            return 0;
+                    if (palpite > numeroAleatorio)
+                    {
+                        Console.WriteLine("O número pensado é menor que o seu palpite.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("O número pensado é maior que o seu palpite.");
+                    }
+
+                    int pontuacaoPerdida = Math.Abs(palpite - numeroAleatorio) / 2;
+                    pontuacao -= pontuacaoPerdida;
+
+                    Console.WriteLine($"Pontuação perdida: {pontuacaoPerdida}");
+                    Console.WriteLine();
+                }
+
+                numeroDeChances--;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($"Pontuação final: {pontuacao}");
+            Console.WriteLine("Obrigado por jogar!");
+
+            Console.ReadLine();
         }
-    }
     }
 }
+    
